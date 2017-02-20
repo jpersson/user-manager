@@ -1,0 +1,123 @@
+schema {
+  query: Root
+  mutation: Mutation
+}
+
+input AddUserInput {
+  name: String!
+  age: Int!
+  email: String!
+  address: String!
+  clientMutationId: String
+}
+
+type AddUserPayload {
+  userEdge: UserEdge
+  manager: Manager
+  clientMutationId: String
+}
+
+type Manager implements Node {
+  # The ID of an object
+  id: ID!
+
+  # Users managed by manager
+  users(minAge: Int = 0, after: String, first: Int, before: String, last: Int): UserConnection
+}
+
+input ModifyUserInput {
+  id: ID!
+  age: Int!
+  name: String!
+  address: String!
+  email: String!
+  clientMutationId: String
+}
+
+type ModifyUserPayload {
+  user: User
+  clientMutationId: String
+}
+
+type Mutation {
+  addUser(input: AddUserInput!): AddUserPayload
+  removeUser(input: RemoveUserInput!): RemoveUserPayload
+  modifyUser(input: ModifyUserInput!): ModifyUserPayload
+}
+
+# An object with an ID
+interface Node {
+  # The id of the object.
+  id: ID!
+}
+
+# Information about pagination in a connection.
+type PageInfo {
+  # When paginating forwards, are there more items?
+  hasNextPage: Boolean!
+
+  # When paginating backwards, are there more items?
+  hasPreviousPage: Boolean!
+
+  # When paginating backwards, the cursor to continue.
+  startCursor: String
+
+  # When paginating forwards, the cursor to continue.
+  endCursor: String
+}
+
+input RemoveUserInput {
+  id: ID!
+  clientMutationId: String
+}
+
+type RemoveUserPayload {
+  deletedUserId: ID
+  manager: Manager
+  clientMutationId: String
+}
+
+type Root {
+  # Fetches an object given its ID
+  node(
+    # The ID of an object
+    id: ID!
+  ): Node
+  manager: Manager
+}
+
+# A user managed by the app
+type User implements Node {
+  # The ID of an object
+  id: ID!
+
+  # Full name of the user
+  name: String
+
+  # Age of the user
+  age: Int
+
+  # Full address of the user
+  address: String
+
+  # E-Mail of the user
+  email: String
+}
+
+# A connection to a list of items.
+type UserConnection {
+  # Information to aid in pagination.
+  pageInfo: PageInfo!
+
+  # A list of edges.
+  edges: [UserEdge]
+}
+
+# An edge in a connection.
+type UserEdge {
+  # The item at the end of the edge
+  node: User
+
+  # A cursor for use in pagination
+  cursor: String!
+}
