@@ -1,12 +1,3 @@
-/**
- *  Copyright (c) 2015, Facebook, Inc.
- *  All rights reserved.
- *
- *  This source code is licensed under the BSD-style license found in the
- *  LICENSE file in the root directory of this source tree. An additional grant
- *  of patent rights can be found in the PATENTS file in the same directory.
- */
-
 import {
   GraphQLBoolean,
   GraphQLFloat,
@@ -23,6 +14,7 @@ import {
   connectionArgs,
   connectionDefinitions,
   connectionFromArray,
+  cursorForObjectInConnection,
   fromGlobalId,
   globalIdField,
   mutationWithClientMutationId,
@@ -48,16 +40,16 @@ const {nodeInterface, nodeField} = nodeDefinitions(
     } else if (type === 'Manager') {
       return getManager()
     } else {
-      return null;
+      return null
     }
   },
   (obj) => {
     if (obj instanceof User) {
-      return userType;
+      return userType
     } else if (obj instanceof Manager) {
-      return managerType;
+      return managerType
     } else {
-      return null;
+      return null
     }
   }
 );
@@ -88,10 +80,10 @@ const userType = new GraphQLObjectType({
     }
   }),
   interfaces: [nodeInterface],
-});
+})
 
 const { connectionType: userConnection, edgeType: GraphQLUserEdge } =
-  connectionDefinitions({ name: 'User', nodeType: userType });
+  connectionDefinitions({ name: 'User', nodeType: userType })
 
 const managerType = new GraphQLObjectType({
   name: 'Manager',
@@ -108,11 +100,11 @@ const managerType = new GraphQLObjectType({
         ...connectionArgs
       },
       resolve: (manager, {minAge, ...args}) =>
-        connectionFromArray(getUsers({minAge}), args),
+        connectionFromArray(getUsers({minAge}), args)
     }
   },
-  interfaces: [nodeInterface],
-});
+  interfaces: [nodeInterface]
+})
 
 /**
  * Mutations
@@ -128,24 +120,24 @@ const addUserMutation = mutationWithClientMutationId({
   outputFields: {
     userEdge: {
       type: GraphQLUserEdge,
-      resolve: ({localId}) => {
-        const user = getUser(localId);
+      resolve: ({localUserId}) => {
+        const user = getUser(localUserId);
         return {
           cursor: cursorForObjectInConnection(getUsers(), user),
-          node: user,
-        };
-      },
+          node: user
+        }
+      }
     },
     manager: {
       type: managerType,
-      resolve: () => getManager(),
-    },
+      resolve: () => getManager()
+    }
   },
   mutateAndGetPayload: ({name, age, address, email}) => {
-    const localId = addUser({name, age, address, email})
-    return {localId};
-  },
-});
+    const localUserId = addUser({name, age, address, email})
+    return {localUserId}
+  }
+})
 
 const removeUserMutation = mutationWithClientMutationId({
   name: 'RemoveUser',
@@ -155,19 +147,19 @@ const removeUserMutation = mutationWithClientMutationId({
   outputFields: {
     deletedUserId: {
       type: GraphQLID,
-      resolve: ({id}) => id,
+      resolve: ({id}) => id
     },
     manager: {
       type: managerType,
-      resolve: () => getManager(),
+      resolve: () => getManager()
     },
   },
   mutateAndGetPayload: ({id}) => {
-    const localTodoId = fromGlobalId(id).id;
-    removeUser(localTodoId);
-    return {id};
-  },
-});
+    const localTodoId = fromGlobalId(id).id
+    removeUser(localTodoId)
+    return {id}
+  }
+})
 
 const modifyUserMutation = mutationWithClientMutationId({
   name: 'ModifyUser',
@@ -181,15 +173,15 @@ const modifyUserMutation = mutationWithClientMutationId({
   outputFields: {
     user: {
       type: userType,
-      resolve: ({localId}) => getUser(localId),
+      resolve: ({localId}) => getUser(localId)
     },
   },
   mutateAndGetPayload: ({id, name, age, address, email}) => {
-    const localId = fromGlobalId(id).id;
-    modifyUser({id: localId, name, age, address, email});
-    return {localId};
-  },
-});
+    const localId = fromGlobalId(id).id
+    modifyUser({id: localId, name, age, address, email})
+    return {localId}
+  }
+})
 
 
 const queryType = new GraphQLObjectType({
@@ -199,9 +191,9 @@ const queryType = new GraphQLObjectType({
     manager: {
       type: managerType,
       resolve: () => getManager()
-    },
-  }),
-});
+    }
+  })
+})
 
 const mutationType = new GraphQLObjectType({
   name: 'Mutation',
@@ -209,10 +201,10 @@ const mutationType = new GraphQLObjectType({
     addUser: addUserMutation,
     removeUser: removeUserMutation,
     modifyUser: modifyUserMutation
-  },
-});
+  }
+})
 
 export var Schema = new GraphQLSchema({
   query: queryType,
   mutation: mutationType
-});
+})

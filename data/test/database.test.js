@@ -4,7 +4,7 @@ beforeEach(() => {
   database.removeAllUsers()
 });
 
-test('adding a new user', () => {
+test('adding and getting a new user', () => {
   const user = {address: "Address", age: 45, email: "jane.doe@example.com", name: "Jane Doe"}
   const id = database.addUser(user)
   const fromDB = database.getUser(id)

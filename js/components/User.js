@@ -1,5 +1,5 @@
-import RemoveUserMutation from '../mutations/RemoveUserMutation';
-import ModifyUserMutation from '../mutations/ModifyUserMutation';
+import RemoveUserMutation from '../mutations/RemoveUserMutation'
+import ModifyUserMutation from '../mutations/ModifyUserMutation'
 import UserInput from './UserInput'
 
 import React from 'react';
@@ -9,26 +9,23 @@ import classnames from 'classnames';
 class User extends React.Component {
   state = {
     isEditing: false,
-  };
+    isSelected: false
+  }
 
   _handleDestroyClick = () => {
-    this._removeUser();
-  };
+    this._removeUser()
+  }
 
-  _handleLabelDoubleClick = () => {
-    this._setEditMode(true);
-  };
-/*
-  _handleTextInputCancel = () => {
-    this._setEditMode(false);
-  };
-  _handleTextInputDelete = () => {
-    this._setEditMode(false);
-    this._removeTodo();
-  };
-*/
+  _handleEditClick = () => {
+    this._setEditMode(true)
+  }
+
+  _handleUserViewClick = () => {
+    this.props.onSelection(this)
+  }
+
   _handleUserInputSave = (user) => {
-    this._setEditMode(false);
+    this._setEditMode(false)
     this.props.relay.commitUpdate(
       new ModifyUserMutation({
         user: this.props.user,
@@ -37,18 +34,25 @@ class User extends React.Component {
         address: user.address,
         email: user.email
       })
-    );
-  };
+    )
+  }
 
   _removeUser() {
     this.props.relay.commitUpdate(
-      new RemoveUserMutation({user: this.props.user, manager: this.props.manager})
-    );
+      new RemoveUserMutation({
+        user: this.props.user,
+        manager: this.props.manager
+      })
+    )
   }
 
   _setEditMode = (shouldEdit) => {
     this.setState({isEditing: shouldEdit});
-  };
+  }
+
+  setSelected = (selected) => {
+    this.setState({isSelected: selected})
+  }
 
   renderUserInput() {
     return (
@@ -63,18 +67,20 @@ class User extends React.Component {
         initialAddress={this.props.user.address}
         initialEmail={this.props.user.email}
       />
-    );
+    )
   }
 
   render() {
     return (
       <li
         className={classnames({
-          editing: this.state.isEditing
+          editing: this.state.isEditing,
+          selected: this.state.isSelected
         })}>
-        <div className="user-view" onDoubleClick={this._handleLabelDoubleClick}>
+        <div className="user-view" onClick={this._handleUserViewClick}>
           <label className="user-age">
             {this.props.user.age}
+            <label>years</label>
           </label>
           <label className="user-name">
             {this.props.user.name}
@@ -86,30 +92,33 @@ class User extends React.Component {
             {this.props.user.address}
           </label>
         </div>
-        <button
-          className="destroy"
-          onClick={this._handleDestroyClick}
-        >Delete</button>
+        <div className="actions">
+          <button
+            className="edit"
+            onClick={this._handleEditClick}
+          >Edit</button>
+          <button
+            className="destroy"
+            onClick={this._handleDestroyClick}
+          >Delete</button>
+        </div>
         {this.state.isEditing && this.renderUserInput()}
       </li>
-    );
+    )
   }
 }
 
-export default Relay.createContainer(
-  User,
-  {
-    fragments: {
-      user: () => Relay.QL`
-        fragment on User {
-          name,
-          age,
-          address,
-          email,
-          ${RemoveUserMutation.getFragment('user')},
-          ${ModifyUserMutation.getFragment('user')}
-        }
-      `
-    }
+export default Relay.createContainer(User, {
+  fragments: {
+    user: () => Relay.QL`
+      fragment on User {
+        name,
+        age,
+        address,
+        email,
+        ${RemoveUserMutation.getFragment('user')},
+        ${ModifyUserMutation.getFragment('user')}
+      }
+    `
   }
-);
+})

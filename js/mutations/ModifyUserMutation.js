@@ -1,4 +1,4 @@
-import Relay from 'react-relay';
+import Relay from 'react-relay'
 
 export default class ModifyUserMutation extends Relay.Mutation {
   static fragments = {
@@ -6,11 +6,13 @@ export default class ModifyUserMutation extends Relay.Mutation {
       fragment on User {
         id
       }
-    `,
-  };
-  getMutation() {
-    return Relay.QL`mutation{modifyUser}`;
+    `
   }
+
+  getMutation() {
+    return Relay.QL`mutation{modifyUser}`
+  }
+
   getFatQuery() {
     return Relay.QL`
       fragment on ModifyUserPayload {
@@ -19,25 +21,28 @@ export default class ModifyUserMutation extends Relay.Mutation {
           age
         }
       }
-    `;
+    `
   }
+
   getConfigs() {
     return [{
       type: 'FIELDS_CHANGE',
       fieldIDs: {
-        user: this.props.user.id,
+        user: this.props.user.id
       }
-    }];
+    }]
   }
+
   getVariables() {
     return {
       id: this.props.user.id,
       name: this.props.name,
       age: this.props.age,
       address: this.props.address,
-      email: this.props.email      
-    };
+      email: this.props.email
+    }
   }
+
   getOptimisticResponse() {
     return {
       user: {
@@ -47,6 +52,6 @@ export default class ModifyUserMutation extends Relay.Mutation {
         email: this.props.email,
         address: this.props.address
       },
-    };
+    }
   }
 }

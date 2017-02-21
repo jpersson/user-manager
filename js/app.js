@@ -1,18 +1,18 @@
-import 'babel-polyfill';
+import 'babel-polyfill'
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Relay from 'react-relay';
-import {IndexRoute, Route, Router} from 'react-router';
-import {createHashHistory} from 'history';
-import {applyRouterMiddleware, useRouterHistory} from 'react-router';
-import useRelay from 'react-router-relay';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import Relay from 'react-relay'
+import {IndexRoute, Route, Router} from 'react-router'
+import {createHashHistory} from 'history'
+import {applyRouterMiddleware, useRouterHistory} from 'react-router'
+import useRelay from 'react-router-relay'
 
 
-import App from './components/App';
-import UserList from './components/UserList';
+import App from './components/App'
+import UserList from './components/UserList'
 
-const history = useRouterHistory(createHashHistory)({ queryKey: false });
+const history = useRouterHistory(createHashHistory)({ queryKey: false })
 const managerQueries = { manager: () => Relay.QL`query { manager }` }
 
 ReactDOM.render(
@@ -30,4 +30,4 @@ ReactDOM.render(
     </Route>
   </Router>,
   document.getElementById('root')
-);
+)

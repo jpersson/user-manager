@@ -1,4 +1,4 @@
-import Relay from 'react-relay';
+import Relay from 'react-relay'
 
 export default class AddUserMutation extends Relay.Mutation {
   static fragments = {
@@ -6,21 +6,26 @@ export default class AddUserMutation extends Relay.Mutation {
       fragment on Manager {
         id
       }
-    `,
-  };
+    `
+  }
+
   getMutation() {
     return Relay.QL`mutation{addUser}`;
   }
+
   getFatQuery() {
     return Relay.QL`
       fragment on AddUserPayload @relay(pattern: true) {
         userEdge,
         manager {
-          users
+          users {
+            edges
+          }
         }
       }
-    `;
+    `
   }
+
   getConfigs() {
     return [{
       type: 'RANGE_ADD',
@@ -31,6 +36,7 @@ export default class AddUserMutation extends Relay.Mutation {
       rangeBehaviors: () => 'append'
     }];
   }
+
   getVariables() {
     return {
       name: this.props.name,
@@ -39,6 +45,7 @@ export default class AddUserMutation extends Relay.Mutation {
       email: this.props.email
     };
   }
+
   getOptimisticResponse() {
     return {
       userEdge: {
@@ -51,7 +58,7 @@ export default class AddUserMutation extends Relay.Mutation {
       },
       manager: {
         id: this.props.manager.id
-      },
-    };
+      }
+    }
   }
 }

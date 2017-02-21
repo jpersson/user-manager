@@ -1,11 +1,12 @@
-import React from 'react';
-import Relay from 'react-relay';
+import React from 'react'
+import Relay from 'react-relay'
 
-import User from './User';
+import User from './User'
 
 class UserList extends React.Component {
   state = {
-    minAge: 0
+    minAge: 0,
+    selectedUser: null
   }
 
   _handleFilterChange = (event) => {
@@ -15,14 +16,29 @@ class UserList extends React.Component {
     })
   }
 
+  _handleSelectionChange = (userComponent) => {
+    if(this.state.selectedUser === userComponent) {
+      userComponent.setSelected(false)
+      this.setState({selectedUser: null})
+    }
+    else {
+      if(this.state.selectedUser) {
+        this.state.selectedUser.setSelected(false)
+      }
+      userComponent.setSelected(true)
+      this.setState({selectedUser: userComponent})
+    }
+  }
+
   _renderUsers() {
     return this.props.manager.users.edges.map(edge =>
       <User
         key={edge.node.id}
         user={edge.node}
         manager={this.props.manager}
+        onSelection={this._handleSelectionChange}
       />
-    );
+    )
   }
   render() {
     return (
@@ -41,7 +57,7 @@ class UserList extends React.Component {
           {this._renderUsers()}
         </ul>
       </section>
-    );
+    )
   }
 }
 
@@ -52,7 +68,7 @@ export default Relay.createContainer(UserList, {
   prepareVariables({minAge}) {
     return {
       minAge: minAge < 0 ? 0 : minAge,
-    };
+    }
   },
   fragments: {
     manager: () => Relay.QL`
@@ -67,5 +83,5 @@ export default Relay.createContainer(UserList, {
         }
       }
     `,
-  },
-});
+  }
+})

@@ -8,20 +8,19 @@ class User {
     this.age = object.age
   }
 }
-class Manager {}
-
-// Mock data
+class Manager {
+  constructor(id) {
+    this.id = id
+  }
+}
 
 let userIdSequence = 0
 
+const manager = new Manager(1)
 const users = []
 const getNextUserId = () => (userIdSequence++).toString()
 
-const manager = new Manager()
-
-// Setup some test data
-manager.id = '1';
-
+// Mock data
 function setupTestData() {
   [
     {name:'John Doe', age: 23, email: 'john.doe@example.com', address: 'Address'},
@@ -41,7 +40,7 @@ function addUser(input) {
 
 function removeUser(id) {
   const index = _userIndexById(id)
-  if (index !== -1) users.splice(index, 1);
+  if (index !== -1) users.splice(index, 1)
 }
 
 function removeAllUsers() {

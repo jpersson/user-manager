@@ -1,5 +1,5 @@
-import React from 'react';
-import Relay from 'react-relay';
+import React from 'react'
+import Relay from 'react-relay'
 
 import AddUserMutation from '../mutations/AddUserMutation';
 import UserInput from './UserInput';
@@ -14,8 +14,9 @@ class App extends React.Component {
         email: user.email,
         manager: this.props.manager
       })
-    );
-  };
+    )
+  }
+
   render() {
     return (
       <div>
@@ -26,14 +27,12 @@ class App extends React.Component {
 
           {this.props.children}
 
-        </section>
-        <footer className="info">
           <UserInput
             autoFocus={true}
             className="add-user"
             onSave={this._handleUserInputSave}
           />
-        </footer>
+        </section>
       </div>
     )
   }
@@ -45,6 +44,6 @@ export default Relay.createContainer(App, {
       fragment on Manager {
         ${AddUserMutation.getFragment('manager')},
       }
-    `,
+    `
   }
 })
